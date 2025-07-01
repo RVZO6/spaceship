@@ -6,19 +6,14 @@ type Mat4x4 struct {
 	M [16]float64
 }
 
-func (mat Mat4x4) MultiplyVec3(v Vec3) Vec3 {
+func (mat Mat4x4) MultiplyVec3(v Vec3) (Vec3, float64) {
 	var result Vec3
 	result.X = v.X*mat.M[0] + v.Y*mat.M[4] + v.Z*mat.M[8] + mat.M[12]
 	result.Y = v.X*mat.M[1] + v.Y*mat.M[5] + v.Z*mat.M[9] + mat.M[13]
 	result.Z = v.X*mat.M[2] + v.Y*mat.M[6] + v.Z*mat.M[10] + mat.M[14]
 	w := v.X*mat.M[3] + v.Y*mat.M[7] + v.Z*mat.M[11] + mat.M[15]
 
-	if w != 0.0 {
-		result.X /= w
-		result.Y /= w
-		result.Z /= w
-	}
-	return result
+	return result, w
 }
 
 func NewRotationZ(angle float64) Mat4x4 {
@@ -83,5 +78,17 @@ func (m1 Mat4x4) Multiply(m2 Mat4x4) Mat4x4 {
 		}
 	}
 	return result
+}
+
+func NewPerspective(fov, aspectRatio, near, far float64) Mat4x4 {
+	f := 1.0 / math.Tan(fov*math.Pi/360.0)
+	return Mat4x4{
+		M: [16]float64{
+			f / aspectRatio, 0, 0, 0,
+			0, f, 0, 0,
+			0, 0, (far + near) / (near - far), -1,
+			0, 0, (2 * far * near) / (near - far), 0,
+		},
+	}
 }
 
