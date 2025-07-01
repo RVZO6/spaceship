@@ -1,16 +1,13 @@
 package main
 
 import (
-	// Make sure this path is correct for your project
-	"github.com/RVZO6/spaceship/vector"
-
 	"github.com/gdamore/tcell/v2"
 	"image" // You need this for tcell.Point
 	"log"
+	"spaceship/vector"
 	"time"
 )
 
-// FIXED: Removed the unused 'velocity' field for now.
 type GameState struct {
 	vertices []vector.Vec3
 	angle    float64
@@ -23,8 +20,6 @@ func (gs *GameState) Update() {
 	gs.angle += 0.02
 }
 
-// NEW: The drawLine function was missing.
-// It uses Bresenham's algorithm to draw a line on the screen.
 func drawLine(screen tcell.Screen, x1, y1, x2, y2 int, style tcell.Style) {
 	dx := x2 - x1
 	if dx < 0 {
@@ -146,4 +141,3 @@ func main() {
 		}
 	}
 }
-

@@ -1,4 +1,4 @@
-module github.com/RVZO6/spaceship
+module spaceship
 
 go 1.24.4
 
