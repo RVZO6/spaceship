@@ -16,19 +16,6 @@ func (mat Mat4x4) MultiplyVec3(v Vec3) (Vec3, float64) {
 	return result, w
 }
 
-func NewRotationZ(angle float64) Mat4x4 {
-	cos := math.Cos(angle)
-	sin := math.Sin(angle)
-	return Mat4x4{
-		M: [16]float64{
-			cos, sin, 0, 0,
-			-sin, cos, 0, 0,
-			0, 0, 1, 0,
-			0, 0, 0, 1,
-		},
-	}
-}
-
 func NewRotationY(angle float64) Mat4x4 {
 	cos := math.Cos(angle)
 	sin := math.Sin(angle)
@@ -91,4 +78,3 @@ func NewPerspective(fov, aspectRatio, near, far float64) Mat4x4 {
 		},
 	}
 }
-
