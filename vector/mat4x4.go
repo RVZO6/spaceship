@@ -80,4 +80,26 @@ func (m1 Mat4x4) Multiply(m2 Mat4x4) Mat4x4 {
 	}
 	return result
 }
+func NewTranslation(x, y, z float64) Mat4x4 {
+	return Mat4x4{
+		M: [16]float64{
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			x, y, z, 1, // The translation values go in the 4th column (indices 12, 13, 14)
+		},
+	}
+}
+func NewPerspective(fov, aspect, near, far float64) Mat4x4 {
+	f := 1.0 / math.Tan(fov/2.0)
+	nf := 1.0 / (near - far)
 
+	return Mat4x4{
+		M: [16]float64{
+			f / aspect, 0, 0, 0,
+			0, f, 0, 0,
+			0, 0, (far + near) * nf, -1,
+			0, 0, (2 * far * near) * nf, 0,
+		},
+	}
+}
