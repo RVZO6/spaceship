@@ -15,13 +15,10 @@ type GameState struct {
 }
 
 type Player struct {
-	Position   vector.Vec3
-	Velocity   vector.Vec3
-	Yaw        float64
-	Pitch      float64
-	prevMouseX int
-	prevMouseY int
-	firstMouse bool
+	Position vector.Vec3
+	Velocity vector.Vec3
+	Yaw      float64
+	Pitch    float64
 }
 
 func (p *Player) Forward() vector.Vec3 {
@@ -86,7 +83,7 @@ func main() {
 	if err := screen.Init(); err != nil {
 		log.Fatalf("failed to initialize screen: %v", err)
 	}
-	screen.EnableMouse()
+	screen.EnableMouse(tcell.MouseMotionEvents)
 
 	defer screen.Fini()
 
@@ -106,11 +103,13 @@ func main() {
 	gs := &GameState{
 		vertices: verts,
 		angle:    0,
-		player:   Player{Position: vector.Vec3{X: 0, Y: 0, Z: 5}, firstMouse: true},
+		player:   Player{Position: vector.Vec3{X: 0, Y: 0, Z: 5}},
 	}
 
 	quit := make(chan struct{})
 	go func() {
+		var prevMouseX, prevMouseY int
+		var firstMouse = true
 		for {
 			ev := screen.PollEvent()
 			switch ev := ev.(type) {
@@ -120,13 +119,13 @@ func main() {
 					close(quit)
 					return
 				case 'a':
-					gs.player.Yaw += 0.03
+					gs.player.Yaw += 0.07
 				case 'd':
-					gs.player.Yaw -= 0.03
+					gs.player.Yaw -= 0.07
 				case 'r':
-					gs.player.Pitch += 0.03
+					gs.player.Pitch += 0.07
 				case 'f':
-					gs.player.Pitch -= 0.03
+					gs.player.Pitch -= 0.07
 				case 'w':
 					forwardDir := gs.player.Forward()
 					thrustVector := forwardDir.Scale(thrust)
@@ -147,19 +146,19 @@ func main() {
 			case *tcell.EventMouse:
 				newX, newY := ev.Position()
 
-				if gs.player.firstMouse {
-					gs.player.prevMouseX = newX
-					gs.player.prevMouseY = newY
-					gs.player.firstMouse = false
+				if firstMouse {
+					prevMouseX = newX
+					prevMouseY = newY
+					firstMouse = false
 				} else {
-					dx := float64(newX - gs.player.prevMouseX)
-					dy := float64(newY - gs.player.prevMouseY)
+					dx := float64(newX - prevMouseX)
+					dy := float64(newY - prevMouseY)
 
-					gs.player.Yaw -= dx * 0.05
-					gs.player.Pitch -= dy * 0.05
+					gs.player.Yaw -= dx * 0.07
+					gs.player.Pitch -= dy * 0.07
 
-					gs.player.prevMouseX = newX
-					gs.player.prevMouseY = newY
+					prevMouseX = newX
+					prevMouseY = newY
 				}
 			}
 		}
